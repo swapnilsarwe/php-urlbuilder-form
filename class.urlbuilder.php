@@ -33,11 +33,10 @@ class UrlBuilder
 
     public function processRequest ($action = '')
     {
-        print_r($action);
         switch ($action)
         {
             case 'generateUrl':
-                $this->generateUrl();
+                $this->getDefaultUrl();
                 $this->loadView('page');
             case 'showform':
                 $this->loadView('form');
@@ -55,7 +54,7 @@ class UrlBuilder
     {
         if (is_null($this->arrUrlParams))
         {
-            $this->arrUrlParams = parse_url($this->defaultUrl);
+            $this->arrUrlParams = parse_url($this->getDefaultUrl());
             $this->arrUrlParams['query'] = $this->getQueryParams();
         }
         return $this->arrUrlParams;
@@ -101,17 +100,40 @@ class UrlBuilder
 
     private function getDefaultUrl ()
     {
-        $this->defaultUrl = '';
-        if (isset($_GET['txtUrlToParse']) && trim($_GET['txtUrlToParse']) != '')
+        if (is_null($this->defaultUrl))
         {
-            $this->defaultUrl = $_GET['txtUrlToParse'];
+            if (isset($_POST['txtUrlBuilder']) && count($_POST['txtUrlBuilder']) > 0)
+            {
+                foreach ($_POST['txtUrlBuilder'] as $k => $v)
+                {
+                    if ($k == 'query')
+                    {
+                        $v = http_build_query($v);
+                    }
+                    $this->arrUrlParams[$k] = $v;
+                }
+                $this->arrUrlParams = $this->arrUrlParams;
+                $this->defaultUrl = http_build_url($_POST['txtUrlToParse'], $this->arrUrlParams);
+                $this->arrUrlParams['query'] = $this->getQueryParams();
+            }
+            if (isset($_POST['txtUrlToParse']) && trim($_POST['txtUrlToParse']) != '' && is_null($this->defaultUrl))
+            {
+                $this->defaultUrl = $_POST['txtUrlToParse'];
+            }
         }
         return $this->defaultUrl;
     }
 
     private function getUrlBox ()
     {
-        return '<input type="text" name="txtUrlToParse" id="txtUrlToParse" value="' . $this->getFinalUrl() . '" />
+        return '<ul>
+                    <li>
+                        <label for="txtUrlToParse">Enter Url: </label>
+                        <input type="text" name="txtUrlToParse" id="txtUrlToParse" value="' .
+                 $this->getDefaultUrl() . '" />
+                    </li>
+                </ul>
+                <hr />
                 <input type="hidden" name="action" value="generateUrl" />';
     }
 
@@ -123,40 +145,11 @@ class UrlBuilder
         if ($this->getDefaultUrl())
         {
             $arrParams = $this->getUrlParams();
+            $strHTML .= '<h4>Edit the fields:</h4>';
             $strHTML .= $this->buildFields($arrParams);
         }
         
         return $strHTML;
-    }
-
-    public function generateUrl ()
-    {
-        if (is_null($this->finalUrl))
-        {
-            if (isset($_GET['txtUrlBuilder']) && count($_GET['txtUrlBuilder']) > 0)
-            {
-                foreach ($_GET['txtUrlBuilder'] as $k => $v)
-                {
-                    if ($k == 'query')
-                    {
-                        $v = http_build_query($v);
-                    }
-                    $this->arrUrlParams[$k] = $v;
-                }
-                $this->queryParams = $this->arrUrlParams['query'];
-                $this->arrUrlParams = $this->arrUrlParams;
-                $this->finalUrl = http_build_url($this->defaultUrl, $this->arrUrlParams);
-            }
-        }
-    }
-
-    public function getFinalUrl ()
-    {
-        if (is_null($this->finalUrl))
-        {
-            $this->generateUrl();
-        }
-        return $this->finalUrl;
     }
 }
 

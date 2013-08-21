@@ -1,5 +1,5 @@
 <?php
 require_once 'http_build_url.php';
 require_once 'class.urlbuilder.php';
-$action = (isset($_GET['action'])) ? $_GET['action'] : '';
+$action = (isset($_POST['action'])) ? $_POST['action'] : '';
 UrlBuilder::Create()->processRequest($action);
