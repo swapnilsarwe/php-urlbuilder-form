@@ -56,7 +56,11 @@ ul li {
 	<div id="wrapper">
 		<h1>PHP - URL Builder Form</h1>
         <?php echo UrlBuilder::Create()->processRequest('showform')?>
-        <?php echo UrlBuilder::Create()->getFinalUrl(); ?>
+        <?php if(UrlBuilder::Create()->getFinalUrl()){ ?>
+            <hr />
+            Final Url:<br />
+            <a target="blank" href="<?php echo UrlBuilder::Create()->getFinalUrl(); ?>"><?php echo UrlBuilder::Create()->getFinalUrl(); ?></a>
+        <?php } ?>
     </div>
 </body>
 </html>

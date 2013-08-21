@@ -9,7 +9,7 @@ class UrlBuilder
 
     private $arrUrlParams;
 
-    private $defaultUrl = 'http://swapnilsarwe.com/?fname=swapnil&lname=sarwe&language=php&location=mumbai';
+    private $defaultUrl;
 
     private $finalUrl;
 
@@ -33,6 +33,7 @@ class UrlBuilder
 
     public function processRequest ($action = '')
     {
+        print_r($action);
         switch ($action)
         {
             case 'generateUrl':
@@ -98,10 +99,34 @@ class UrlBuilder
         return $strForm;
     }
 
+    private function getDefaultUrl ()
+    {
+        $this->defaultUrl = '';
+        if (isset($_GET['txtUrlToParse']) && trim($_GET['txtUrlToParse']) != '')
+        {
+            $this->defaultUrl = $_GET['txtUrlToParse'];
+        }
+        return $this->defaultUrl;
+    }
+
+    private function getUrlBox ()
+    {
+        return '<input type="text" name="txtUrlToParse" id="txtUrlToParse" value="' . $this->getFinalUrl() . '" />
+                <input type="hidden" name="action" value="generateUrl" />';
+    }
+
     public function printForm ()
     {
-        $arrParams = $this->getUrlParams();
-        return $this->buildFields($arrParams);
+        $strHTML = '';
+        
+        $strHTML .= $this->getUrlBox();
+        if ($this->getDefaultUrl())
+        {
+            $arrParams = $this->getUrlParams();
+            $strHTML .= $this->buildFields($arrParams);
+        }
+        
+        return $strHTML;
     }
 
     public function generateUrl ()
