@@ -9,7 +9,6 @@ body,form,ul,li,label,input {
 
 body {
 	font-family: Ubuntu, Tahoma, sans-serif;
-	font-size: 13px;
 }
 
 h1 {
@@ -17,28 +16,31 @@ h1 {
 }
 
 #wrapper {
-	width: 80%;
+	width: 95%;
 	margin: 0 auto;
 }
 
 form {
-	width: 60%;
 }
 
 form label {
 	display: block;
 	float: left;
 	text-align: left;
-	width: 75px;
+	width: 125px;
 }
 
 form input {
 	display: block;
+	font: inherit;
+	padding: 3px;
 	width: 250px;
 }
 
-#btnBuildUrl {
+#btnBuildUrl, #btnSubmitUrl {
+	margin: 20px 0 5px 0;
 	width: 100px;
+	
 }
 
 ul {
@@ -47,7 +49,6 @@ ul {
 }
 
 ul li {
-	font-weight: bold;
 	padding: 3px 0;
 }
 </style>
@@ -59,7 +60,9 @@ ul li {
         <?php if(UrlBuilder::Create()->getDefaultUrl()){ ?>
             <hr />
             Final Url:<br />
-            <a target="blank" href="<?php echo UrlBuilder::Create()->getDefaultUrl(); ?>"><?php echo UrlBuilder::Create()->getDefaultUrl(); ?></a>
+            <a target="blank" href="<?php echo UrlBuilder::Create()->getDefaultUrl(); ?>">
+            	<?php echo UrlBuilder::Create()->getDefaultUrl(); ?>
+            </a>
         <?php } ?>
     </div>
 </body>

@@ -64,7 +64,11 @@ class UrlBuilder
     {
         if (is_null($this->queryParams))
         {
-            parse_str($this->arrUrlParams['query'], $this->queryParams);
+            $this->queryParams = array();
+            if(isset($this->arrUrlParams['query']))
+            {
+                parse_str($this->arrUrlParams['query'], $this->queryParams);
+            }
         }
         return $this->queryParams;
     }
@@ -75,9 +79,12 @@ class UrlBuilder
         foreach ($arrParams as $key => $val)
         {
             $strForm .= '<li>';
-            if (is_array($val) && count($val) > 0)
+            if (is_array($val))
             {
-                $strForm .= $key . '<br />' . $this->buildFields($val, $key);
+                if(count($val) > 0)
+                {
+                    $strForm .= $key . '<br />' . $this->buildFields($val, $key);
+                }
             }
             else
             {
@@ -102,7 +109,7 @@ class UrlBuilder
     {
         if (is_null($this->defaultUrl))
         {
-            if (isset($_POST['txtUrlBuilder']) && count($_POST['txtUrlBuilder']) > 0)
+            if (isset($_POST['btnBuildUrl']) && isset($_POST['txtUrlBuilder']) && count($_POST['txtUrlBuilder']) > 0)
             {
                 foreach ($_POST['txtUrlBuilder'] as $k => $v)
                 {
@@ -116,7 +123,7 @@ class UrlBuilder
                 $this->defaultUrl = http_build_url($_POST['txtUrlToParse'], $this->arrUrlParams);
                 $this->arrUrlParams['query'] = $this->getQueryParams();
             }
-            if (isset($_POST['txtUrlToParse']) && trim($_POST['txtUrlToParse']) != '' && is_null($this->defaultUrl))
+            if (isset($_POST['btnSubmitUrl']) && isset($_POST['txtUrlToParse']) && trim($_POST['txtUrlToParse']) != '' && is_null($this->defaultUrl))
             {
                 $this->defaultUrl = $_POST['txtUrlToParse'];
             }
@@ -129,8 +136,8 @@ class UrlBuilder
         return '<ul>
                     <li>
                         <label for="txtUrlToParse">Enter Url: </label>
-                        <input type="text" name="txtUrlToParse" id="txtUrlToParse" value="' .
-                 $this->getDefaultUrl() . '" />
+                        <input type="text" name="txtUrlToParse" id="txtUrlToParse" value="' .$this->getDefaultUrl() . '" />
+                        <input type="submit" name="btnSubmitUrl" id="btnSubmitUrl" value="Submit Url" />
                     </li>
                 </ul>
                 <hr />
@@ -147,6 +154,7 @@ class UrlBuilder
             $arrParams = $this->getUrlParams();
             $strHTML .= '<h4>Edit the fields:</h4>';
             $strHTML .= $this->buildFields($arrParams);
+            $strHTML .= '<input type="submit" name="btnBuildUrl" id="btnBuildUrl" value="Build Url" />';
         }
         
         return $strHTML;
